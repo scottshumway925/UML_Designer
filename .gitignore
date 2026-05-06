@@ -1,0 +1,70 @@
+# =========================
+# Build results
+# =========================
+bin/
+obj/
+out/
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+
+# =========================
+# Visual Studio
+# =========================
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# VS Code (if you ever use it)
+.vscode/
+
+# =========================
+# Rider / JetBrains (optional)
+# =========================
+.idea/
+*.sln.iml
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# NuGet
+# =========================
+*.nupkg
+packages/
+# Keep packages.config if you use it
+!packages.config
+
+# =========================
+# .NET Core
+# =========================
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# =========================
+# Publish output
+# =========================
+publish/
+
+# =========================
+# Test results
+# =========================
+TestResults/
+
+# =========================
+# Avalonia-specific (optional cleanup)
+# =========================
+*.pdb
+*.cache
