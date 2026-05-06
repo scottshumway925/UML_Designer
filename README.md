@@ -1,6 +1,6 @@
 # UML Class Diagram Builder
 
-## 📌 Overview
+## Overview
 This project is a senior capstone application designed to help programmers create **UML Class Diagrams** quickly and intuitively.
 
 UML Class Diagrams are essential for planning object-oriented software architecture. They provide a high-level view of how classes interact—without requiring any code. However, many existing tools (like Word or PowerPoint) are inefficient for this purpose.
@@ -9,7 +9,7 @@ This application aims to solve that problem by offering a **dedicated, user-frie
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Core Functionality
 - **Canvas-Based Interface**
@@ -37,7 +37,7 @@ This application aims to solve that problem by offering a **dedicated, user-frie
 
 ---
 
-## 🤖 AI Integration
+## AI Integration
 
 This project will integrate AI using OpenRouter models to enhance the design process.
 
@@ -55,7 +55,7 @@ This project will integrate AI using OpenRouter models to enhance the design pro
 
 ---
 
-## 🎯 Stretch Goals
+## Stretch Goals
 
 Once the core UML functionality is complete, the project may expand to include:
 
@@ -70,7 +70,7 @@ Once the core UML functionality is complete, the project may expand to include:
 
 ---
 
-## 🖼️ Example
+## Example
 
 Below is an example of a UML Class Diagram:
 
@@ -80,7 +80,7 @@ Below is an example of a UML Class Diagram:
 
 ---
 
-## 💡 Motivation
+## Motivation
 
 Many developers struggle with existing tools when creating UML diagrams. This project focuses on:
 
@@ -90,14 +90,14 @@ Many developers struggle with existing tools when creating UML diagrams. This pr
 
 ---
 
-## 🛠️ Tech Direction (Planned)
+## Tech Direction (Planned)
 
-- Frontend: Canvas-based UI (likely JavaScript)
+- Frontend: Canvas-based UI (C# using Avalonia UI)
 - Backend / AI Integration: OpenRouter API
 - Diagram Rendering: Custom logic for layout and connections
 
 ---
 
-## 📈 Project Status
+## Project Status
 
-🚧 In development (Senior Project)
+In development (Senior Project)
