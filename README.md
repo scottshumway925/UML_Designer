@@ -70,16 +70,6 @@ Once the core UML functionality is complete, the project may expand to include:
 
 ---
 
-## Example
-
-Below is an example of a UML Class Diagram:
-
-![Example UML Diagram](path/to/your/image.png)
-
-*Example diagram created for a previous project*
-
----
-
 ## Motivation
 
 Many developers struggle with existing tools when creating UML diagrams. This project focuses on:
