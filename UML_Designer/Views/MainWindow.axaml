@@ -15,6 +15,66 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Window.Styles>
+        <!-- Sidebar Button Styling -->
+		<Style Selector="Button.SideBarButton">
+            <Setter Property="Height" Value="80"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+    </Window.Styles>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 2 Rows Here -->
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <!-- 2 Columns Here -->
+			<ColumnDefinition Width="160"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Top Tool Bar -->
+        <Border Background="#2D2D30" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Horizontal">
+				<Button Content="Place" Click="OnSelectClicked" Classes="TopBarButton"/>
+                <Button Content="Select" Click="OnSelectClicked" Classes="TopBarButton"/>
+                <Button Content="Edit" Click="OnSelectClicked" Classes="TopBarButton"/>
+                <Button Content="Save" Click="OnSelectClicked" Classes="TopBarButton"/>
+                <Button Content="Load" Click="OnSelectClicked" Classes="TopBarButton"/>
+                <Button Content="Change Diagram" Click="OnSelectClicked" Classes="TopBarButton"/>
+            </StackPanel>
+        </Border>
+
+        <!-- UML Designer Text -->
+        <Border Background="#2D2D30">
+		    <TextBlock Text="UML DESIGNER" Foreground="White" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>	
+        </Border>
+
+        <!-- Sidebar -->
+        <ScrollViewer Grid.Column="0" Grid.Row="1" FlowDirection="RightToLeft">
+            <StackPanel Grid.Column="0" Background="#2D2D30" Spacing="10" FlowDirection="LeftToRight">
+
+                <Button Content="Select" Click="OnSelectClicked" Classes="SideBarButton"/>
+                <Button Content="CreateClassNode" Click="OnCreateClassNodeClicked" Classes="SideBarButton"/>
+                <Button Content="CreateInterfaceNode" Click="OnCreateInterfaceNodeClicked" Classes="SideBarButton"/>
+                <Button Content="Connect" Click="OnConnectClicked" Classes="SideBarButton"/>
+                <Button Content="ScrollbarLengthTest" Click="OnConnectClicked" Classes="SideBarButton"/>
+                <Button Content="LengthTest2" Click="OnConnectClicked" Classes="SideBarButton"/>
+
+            </StackPanel>
+        </ScrollViewer>
+        <!-- Scrollable Canvas for UML Diagrams -->
+        <ScrollViewer Grid.Column="1" Grid.Row="1">
+			<Canvas Name="MainCanvas" Background="LightGray" Height="5000" Width="5000"/>
+        </ScrollViewer>
+
+    </Grid>
 
 </Window>
