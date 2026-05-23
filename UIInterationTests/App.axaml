@@ -1,7 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="UML_Designer.App"
-             xmlns:local="using:UML_Designer"
+             x:Class="UIInterationTests.App"
+             xmlns:local="using:UIInterationTests"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -11,6 +11,7 @@
   
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="avares://UML_Designer/Styles/UMLClassStyles.axaml"/>
+        <StyleInclude Source="avares://UIInterationTests/Styles/NodeStyles.axaml"/>
+        <StyleInclude Source="avares://UIInterationTests/Styles/RootCanvasStyles.axaml"/>
     </Application.Styles>
 </Application>
