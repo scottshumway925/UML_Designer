@@ -1,0 +1,47 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="Border.UMLClassSection">
+        <Setter Property="Background" Value="white"/>
+    </Style>
+
+    <Style Selector="Border.FullBorder">
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+    </Style>
+
+    <Style Selector="Border.NoTopBorder">
+        <Setter Property="BorderThickness" Value="2,0,2,2"/>
+        <Setter Property="BorderBrush" Value="Black"/>    
+    </Style>
+
+    <Style Selector="Border.MainContainer">
+        <Setter Property="BorderBrush" Value="transparent"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+    </Style>
+
+    <Style Selector="Border.MainContainer.Selected">
+        <Setter Property="BorderBrush" Value="#0068b3"/>
+        <Setter Property="BorderThickness" Value="1.5"/>
+    </Style>
+
+    <Style Selector="TextBlock.AttributesDisplayText">
+       <Setter Property="HorizontalAlignment" Value="Left"/>
+       <Setter Property="VerticalAlignment" Value="Top"/>
+       <Setter Property="Padding" Value="5"/>
+    </Style>
+
+    <Style Selector="TextBlock.MethodsDisplayText">
+       <Setter Property="HorizontalAlignment" Value="Left"/>
+       <Setter Property="VerticalAlignment" Value="Top"/>
+       <Setter Property="Padding" Value="5"/>
+    </Style>
+
+    <Style Selector="Border.ResizeHandle">
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="Height" Value="10"/>
+        <Setter Property="Background" Value="#888888"/>
+
+    </Style>
+    
+</Styles>

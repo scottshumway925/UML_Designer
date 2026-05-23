@@ -7,7 +7,8 @@
         x:Class="UML_Designer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="UML_Designer">
+        Title="UML_Designer"
+        KeyDown="OnKeyboardKeyDown">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -70,9 +71,114 @@
 
             </StackPanel>
         </ScrollViewer>
+
         <!-- Scrollable Canvas for UML Diagrams -->
         <ScrollViewer Grid.Column="1" Grid.Row="1">
-			<Canvas Name="MainCanvas" Background="LightGray" Height="5000" Width="5000"/>
+			<ItemsControl x:Name="UMLCanvas"
+                          Classes="UMLCanvas"
+                          ItemsSource="{Binding ClassCanvas.Classes}"
+                          PointerPressed="OnCanvasClicked"
+                          Height="5000"
+                          Width="5000">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas  Name="MainCanvas" Background="LightGray" Height="5000" Width="2500"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemContainerTheme>
+                    <ControlTheme TargetType="ContentPresenter" x:DataType="vm:UMLClassViewModel">
+                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                    </ControlTheme>
+                </ItemsControl.ItemContainerTheme>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Classes="MainContainer UMLClass"
+                                Classes.Selected="{Binding IsSelected}"
+                                PointerPressed="OnUMLClassClicked"
+                                PointerMoved="OnUMLClassMoved"
+                                PointerReleased="OnUMLClassReleased"
+                                Width="{Binding Width}">
+                            <StackPanel>
+                                <Border Classes="UMLClassSection FullBorder"
+                                        Height="{Binding TitleHeight}">
+                                    <Panel>
+                                        <TextBlock Text="{Binding Title}"
+                                                   IsVisible="{Binding !IsEditingTitle}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="Black"
+                                                   PointerPressed="OnClassTitleClicked"/>
+                                        <TextBox   Text="{Binding Title}"
+                                                   IsVisible="{Binding IsEditingTitle}"
+                                                   HorizontalAlignment="Stretch"
+                                                   TextWrapping="Wrap"
+                                                   AcceptsReturn="True"
+                                                   LostFocus="OnClassTitleLostFocus"
+                                                   KeyDown="OnClassTitleKeyDown"/>
+                                    </Panel>
+                                </Border>
+                                <Border Classes="UMLClassSection NoTopBorder"
+                                        Height="{Binding AttributeHeight}">
+                                    <Panel>
+                                        <TextBlock Text="{Binding AttributesString}"
+                                                   Classes="AttributesDisplayText"
+                                                   IsVisible="{Binding !IsEditingAttributes}"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="Black"
+                                                   PointerPressed="OnClassAttributesClicked"/>
+                                        <TextBox   Text="{Binding AttributesString}"
+                                                   IsVisible="{Binding IsEditingAttributes}"
+                                                   HorizontalAlignment="Stretch"
+                                                   AcceptsReturn="True"
+                                                   TextWrapping="Wrap"
+                                                   LostFocus="OnClassAttributesLostFocus"
+                                                   KeyDown="OnClassAttributesKeyDown"/>
+                                        <Border    Classes="ResizeHandle"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Bottom"
+                                                   PointerPressed="OnResizeAttributesHandleClicked"
+                                                   PointerMoved="OnResizeAttributesHandleMoved"
+                                                   PointerReleased="OnResizeHandleReleased"/>
+
+                                    </Panel>
+                                </Border>
+                                <Border Classes="UMLClassSection NoTopBorder"
+                                        Height="{Binding MethodHeight}">
+                                    <Panel>
+                                        <TextBlock Text="{Binding MethodsString}"
+                                                   Classes="MethodsDisplayText"
+                                                   IsVisible="{Binding !IsEditingMethods}"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="Black"
+                                                   PointerPressed="OnClassMethodsClicked"/>
+                                        <TextBox   Text="{Binding MethodsString}"
+                                                   IsVisible="{Binding IsEditingMethods}"
+                                                   HorizontalAlignment="Stretch"
+                                                   AcceptsReturn="True"
+                                                   TextWrapping="Wrap"
+                                                   LostFocus="OnClassMethodsLostFocus"
+                                                   KeyDown="OnClassMethodsKeyDown"/>
+                                        <Border    Classes="ResizeHandle"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Bottom"
+                                                   PointerPressed="OnResizeMethodsHandleClicked"
+                                                   PointerMoved="OnResizeMethodsHandleMoved"
+                                                   PointerReleased="OnResizeHandleReleased"/>
+                                    </Panel>
+
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+        
         </ScrollViewer>
 
     </Grid>

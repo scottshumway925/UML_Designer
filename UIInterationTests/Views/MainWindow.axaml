@@ -1,0 +1,70 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:UIInterationTests.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="UIInterationTests.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="UIInterationTests"
+        KeyDown="WindowKeyDown">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <!-- This is the declaration of a control element. The element uses the ItemSoure="{Binding Nodes}"
+         To bind to the MainWindowViewModel and pull out one of it's attributes named Nodes. It also calls
+         a private method called "CanvasClicked" when its container is clicked on. -->
+    <ScrollViewer>
+        <ItemsControl x:Name="RootCanvas"
+                      Classes="RootCanvas"
+                      ItemsSource="{Binding Canvas.Nodes}"
+                      PointerPressed="CanvasClicked"
+                      Height="3000"
+                      Width="3000"> 
+
+            <!-- This section tells the ItemsControl element what it's inner container will be. The default is 
+                 a stackPanel, which stacks items vertically on top of each other. This section is overriding
+                 the default to be a blank canvas. -->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <!-- This portion of the ItemsControl element is handling how the placement logic interats with the
+                 dimensions of the canvas. We are telling the ItemsControl element to, for every single node added,
+                 bind it's x value to the left of the canvas and it's y value to th etop of the canvas. The logic in
+                 MainWindow.axaml.cs handles placing the node based on the x and y coordinate clicked on, but this section
+                 sets the boundaries for those applications. Each node added is already wrapped in a ContentPresentor
+                 element, so this ensures each added node is targeted with this. -->
+            <ItemsControl.ItemContainerTheme>
+                <ControlTheme TargetType="ContentPresenter" x:DataType="vm:AddableObjectViewModel">
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </ControlTheme>
+            </ItemsControl.ItemContainerTheme>
+
+            <!-- This section handles the styling of what gets drawn in the wrapper. In this case, the item is a 
+                 border, which has it's stylings defined in the NodeStyles.axaml file and is applied in the App.axaml
+                 file. -->
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Classes="Node" 
+                            Classes.Selected="{Binding IsSelected}"
+                            PointerPressed="NodeClicked">
+                        <TextBlock Text="{Binding Label}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="White"/>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+
+</Window>
