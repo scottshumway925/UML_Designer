@@ -10,6 +10,10 @@ namespace UML_Designer.ViewModels
    public class UMLClassViewModel : ViewModelBase
    {
       private readonly UMLClassModel _classModel;
+      public UMLClassModel GetModel()
+      {
+         return _classModel;
+      }
 
       /****************************************************************************************
       * Below are all of the attributes that handle the positioning of a UML Class node
@@ -162,15 +166,15 @@ namespace UML_Designer.ViewModels
       public void AddAttributeHeight(double deltaY)
       {
          AttributeHeight = (int)deltaY;
-         if (AttributeHeight < 50)
-            AttributeHeight = 50;
+         if (AttributeHeight < 30)
+            AttributeHeight = 30;
       }
 
       public void AddMethodHeight(double deltaY)
       {
          MethodHeight = (int)deltaY;
-         if (MethodHeight < 50)
-            MethodHeight = 50;
+         if (MethodHeight < 30)
+            MethodHeight = 30;
       }
 
       public void AddWidth(double deltaX)
@@ -178,6 +182,16 @@ namespace UML_Designer.ViewModels
          Width = (int)deltaX;
          if (Width < 100)
             Width = 100;
+      }
+
+      public int GetWidth()
+      {
+         return Width;
+      }
+
+      public int GetTotalHeight()
+      {
+         return AttributeHeight + MethodHeight + 30;
       }
    }
 }
