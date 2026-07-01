@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using UML_Designer.Models;
+using UML_Designer.ViewModels.DiagramTypes;
+using UML_Designer.Views;
 
-namespace UML_Designer.ViewModels
+namespace UML_Designer.ViewModels.CanvasNodes
 {
    public class UMLClassCanvasViewModel : ViewModelBase
    {
@@ -67,7 +69,7 @@ namespace UML_Designer.ViewModels
          SelectedClasses.Clear();
       }
 
-      public void DeleteSelectedClasses(MainWindowViewModel vm)
+      public void DeleteSelectedClasses(UMLDiagramViewModel vm)
       {
          if (SelectedClass is not null)
             SelectedClass = null;

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UML_Designer.Models;
 
-namespace UML_Designer.ViewModels
+namespace UML_Designer.ViewModels.CanvasNodes
 {
-   public class UMLClassViewModel : ViewModelBase
+   public class UMLClassViewModel : ViewModelBase, IConnectableNode
    {
       private readonly UMLClassModel _classModel;
       public UMLClassModel GetModel()
@@ -141,11 +141,6 @@ namespace UML_Designer.ViewModels
          get => _isEditingMethods;
          set => SetProperty(ref _isEditingMethods, value);
       }
-
-
-
-      public List<UMLClassAttribute> Attributes => _classModel.Attributes;
-      public List<UMLClassMethod> Methods => _classModel.Methods;
 
       private bool _isSelected;
       public bool IsSelected

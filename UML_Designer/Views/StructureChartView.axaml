@@ -1,0 +1,203 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:UML_Designer.ViewModels.CanvasNodes"
+             xmlns:views="using:UML_Designer.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:connections="using:UML_Designer.ViewModels.Connections"
+             xmlns:diagrams="using:UML_Designer.ViewModels.DiagramTypes"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UML_Designer.Views.StructureChartView"
+             x:DataType="diagrams:StructureChartViewModel"
+             KeyDown="OnKeyboardKeyDown">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 2 Rows Here -->
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <!-- 2 Columns Here -->
+			<ColumnDefinition Width="160"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+                            <!-- Top Tool Bar -->
+                    <Border Background="#2D2D30" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Sidebar -->
+                    <ScrollViewer Grid.Column="0" Grid.Row="1" FlowDirection="RightToLeft">
+                        <StackPanel Grid.Column="0" Background="#2D2D30" Spacing="10" FlowDirection="LeftToRight">
+
+                            <Button Content="Select" 
+                                    Click="OnSelectClicked" 
+                                    Classes="SideBarButton"
+                                    Classes.Active="{Binding IsSelectMode}"/>
+                            <Button Content="Create" 
+                                    Click="OnCreateClicked" 
+                                    Classes="SideBarButton"
+                                    Classes.Active="{Binding IsCreateMode}"/>
+                            <Button Content="Connect" 
+                                    Click="OnConnectClicked" 
+                                    Classes="SideBarButton"
+                                    Classes.Active="{Binding IsConnectMode}"/>
+                            <Button Content="Save File" 
+                                    Click="OnSaveClicked" 
+                                    Classes="SideBarButton"/>
+                            <Button Content="Load File" 
+                                    Click="OnLoadClicked" 
+                                    Classes="SideBarButton"/>
+                            <Button Content="Export PNG File" 
+                                    Click="OnExportClicked" 
+                                    Classes="SideBarButton"/>
+                            <Button Content="AI Feedback"
+                                    Click="OnGetFeedbackClicked"
+                                    Classes="SideBarButton"/>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+        <!-- Scrollable Canvas for UML Diagrams -->
+        <ScrollViewer Grid.Column="1" Grid.Row="1">
+            <Panel PointerPressed="OnCanvasClicked" PointerWheelChanged="OnCanvasScrolled" x:Name="DiagramPanel">
+                <Panel.RenderTransform>
+                    <ScaleTransform ScaleX="{Binding ZoomLevel}"
+                                    ScaleY="{Binding ZoomLevel}"/>
+                </Panel.RenderTransform>
+
+                <ItemsControl x:Name="UMLCanvas"
+                              ItemsSource="{Binding CanvasItems}"
+                              Height="5000"
+                              Width="5000">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Name="MainCanvas" Height="5000" Width="5000" Background="LightGray"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemContainerTheme>
+                        <ControlTheme TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{ReflectionBinding X, FallbackValue=0}"/>
+                            <Setter Property="Canvas.Top" Value="{ReflectionBinding Y, FallbackValue=0}"/>
+                        </ControlTheme>
+                    </ItemsControl.ItemContainerTheme>
+
+                    <ItemsControl.DataTemplates>
+                        <views:StructureChartItemTemplateSelector>
+
+                            <views:StructureChartItemTemplateSelector.BubbleTemplate>
+                                <DataTemplate x:DataType="vm:StructureChartBubbleViewModel">
+                                    <Border Classes="MainContainer"
+                                            Classes.Selected="{Binding IsSelected}"
+                                            PointerPressed="OnBubbleClicked"
+                                            PointerMoved="OnBubbleMoved"
+                                            PointerReleased="OnBubbleReleased"
+                                            Width="{Binding Width}"
+                                            CornerRadius="18">
+                                        <StackPanel>
+                                            <Border Classes="FullBorder"
+                                                    Height="{Binding Height}"
+                                                    CornerRadius="15"
+                                                    Background="white">
+                                                <Panel>
+                                                    <TextBlock Text="{Binding BubbleText}"
+                                                               IsVisible="{Binding !IsEditingBubble}"
+                                                               HorizontalAlignment="Stretch"
+                                                               VerticalAlignment="Stretch"
+                                                               TextAlignment="Center"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="Black"
+                                                               Padding="5"
+                                                               PointerPressed="OnBubbleTextClicked"/>
+                                                    <TextBox   Text="{Binding BubbleText}"
+                                                               IsVisible="{Binding IsEditingBubble}"
+                                                               HorizontalAlignment="Stretch"
+                                                               TextWrapping="Wrap"
+                                                               AcceptsReturn="True"
+                                                               LostFocus="OnBubbleTextLostFocus"
+                                                               KeyDown="OnBubbleTextKeyDown"/>
+                                                </Panel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </views:StructureChartItemTemplateSelector.BubbleTemplate>
+
+                            <views:StructureChartItemTemplateSelector.ConnectionTemplate>
+                                <DataTemplate x:DataType="connections:ConnectionsBaseViewModel">
+                                    <Canvas Width="5000" Height="5000">
+                                        <TextBlock Text="{Binding MultiplicityString}"
+                                                  Foreground="Black"
+                                                  Background="LightGray"
+                                                  IsVisible="{Binding !IsEditingMultiplicity}"
+                                                  TextWrapping="Wrap"
+                                                  Canvas.Left="{Binding MultiplicityLocation.X}"
+                                                  Canvas.Top="{Binding MultiplicityLocation.Y}"
+                                                  PointerPressed="OnConnectionTextClicked"/>
+                                        <TextBox  Text="{Binding MultiplicityString}"
+                                                  IsVisible="{Binding IsEditingMultiplicity}"
+                                                  HorizontalAlignment="Stretch"
+                                                  Canvas.Left="{Binding MultiplicityLocation.X}"
+                                                  Canvas.Top="{Binding MultiplicityLocation.Y}"
+                                                  AcceptsReturn="True"
+                                                  TextWrapping="Wrap"
+                                                  LostFocus="OnConnectionTextLostFocus"
+                                                  KeyDown="OnConnectionTextKeyDown"/>
+                                        <Polyline PointerPressed="OnConnectionClick"
+                                                  Points="{Binding LinePoints}"
+                                                  Stroke="Transparent"
+                                                  StrokeThickness="8"/>
+                                        <Polyline Points="{Binding LinePoints}"
+                                                  Classes="VisibleConnection"
+                                                  PointerPressed="OnConnectionClick"
+                                                  Stroke="{Binding StrokeColor}"
+                                                  StrokeThickness="{Binding StrokeThickness}"/>
+                                        <Polygon  Points="{Binding ShapePoints}"
+                                                  Classes="VisibleConnection"
+                                                  PointerPressed="OnConnectionClick"
+                                                  Stroke="{Binding StrokeColor}"
+                                                  Fill="black"
+                                                  ZIndex="100"
+                                                  StrokeThickness="{Binding StrokeThickness}"/>
+                                    </Canvas>
+                                </DataTemplate>
+                            </views:StructureChartItemTemplateSelector.ConnectionTemplate>
+
+                        </views:StructureChartItemTemplateSelector>
+                    </ItemsControl.DataTemplates>
+
+                </ItemsControl>
+
+                <Panel IsVisible="{Binding IsConnectMode}">
+                    <TextBlock Text="Select a Class to point to" 
+                               IsVisible="{Binding !ConnectionsCanvas.NewParentSelected}" 
+                               Background="crimson" 
+                               Width="300"
+                               Height="30"
+                               Padding="5"
+                               Margin="10"
+                               TextAlignment="Center"
+                               VerticalAlignment="Top"/>
+                    <TextBlock Text="Select a Class to point from"
+                               IsVisible="{Binding ConnectionsCanvas.NewParentSelected}" 
+                               Background="Crimson" 
+                               Width="300"
+                               Height="30"
+                               Padding="5"
+                               Margin="10"
+                               TextAlignment="Center"
+                               VerticalAlignment="Top"/>
+                </Panel>
+    
+            </Panel>
+        </ScrollViewer>
+
+    </Grid>
+
+
+</UserControl>

@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UML_Designer.Views.FeedbackWindow"
+        Title="AI Feedback"
+        Width="600"
+        Height="500">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
+                
+        <TextBlock Grid.Row="0"
+            Text="AI Diagram Feedback"
+            FontSize="18"
+            FontWeight="Bold"
+            Margin="10"/>
+
+        <TextBlock Grid.Row="1"
+            Text="Add any addition context (optional):"
+            Margin="10,0,10,5"/>
+
+        <TextBox Grid.Row="2"
+            x:Name="UserPromptBox"
+            AcceptsReturn="True"
+            TextWrapping="Wrap"
+            Height="80"
+            Margin="10"/>
+
+        <ScrollViewer Grid.Row="3" Margin="10">
+            <TextBlock x:Name="FeedbackText"
+                       TextWrapping="Wrap"
+                       Text=""/>
+        </ScrollViewer>
+        <StackPanel Grid.Row="4"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="10">
+            <Button Content="Submit"
+                Click="OnSubmitClicked"
+                Margin="0,0,10,0"/>
+            <Button Content="Close"
+                HorizontalAlignment="Right"
+                Margin="10"
+                Click="OnCloseClicked"/>
+
+        </StackPanel>
+        
+
+    </Grid>        
+</Window>

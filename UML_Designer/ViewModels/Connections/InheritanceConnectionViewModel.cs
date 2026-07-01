@@ -1,124 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Avalonia;
 using UML_Designer.Models;
-using Avalonia.Media;
+using UML_Designer.ViewModels.CanvasNodes;
 
 namespace UML_Designer.ViewModels.Connections
 {
-   public class InheritanceConnectionViewModel : ViewModelBase
+   public class InheritanceConnectionViewModel : ConnectionsBaseViewModel
    {
-      private readonly ConnectionLineModel _model;
-      private UMLClassViewModel _parent;
-      private UMLClassViewModel _child;
-
       private int _yOffset = 20;
       private int _yConnectionOffset = 30;
       private int _xConnectionOffset = 20;
       private int _yChildOffset = 10;
-
-      private bool _isSelected;
-      public bool IsSelected
+      public InheritanceConnectionViewModel(ConnectionLineModel model, UMLClassViewModel parent, UMLClassViewModel child) : base(model, parent, child)
       {
-         get => _isSelected;
-         set
-         {
-            SetProperty(ref _isSelected, value);
-            OnPropertyChanged(nameof(StrokeColor));
-            OnPropertyChanged(nameof(StrokeThickness));
-         }
+
       }
 
-      public IBrush StrokeColor => IsSelected ? Brushes.Blue : Brushes.Black;
-      public double StrokeThickness => IsSelected ? 4 : 2;
-
-      public double X2 => _parent.X + _parent.Width / 2;
-      public double Y2 => _parent.Y + _parent.GetTotalHeight();
-
-      public List<Point> ArrowPoints => CalculateArrowPoints();
-      public List<Point> LinePoints
+      protected override List<Point> CalculateEndShape()
       {
-         get => _model.RoutingPoints;
-         private set
-         {
-            _model.RoutingPoints = value;
-            OnPropertyChanged(nameof(LinePoints));
-         }
-      }
-
-      public void ChangeParent(UMLClassViewModel newParent)
-      {
-         _parent.PropertyChanged -= OnNodeChanged;
-         _parent = newParent;
-         _model.Parent = newParent.GetModel();
-         _parent.PropertyChanged += OnNodeChanged;
-         LinePoints = SetLines();
-         OnPropertyChanged(nameof(ArrowPoints));
-      }
-
-      public void ChangeChild(UMLClassViewModel newChild)
-      {
-         _child.PropertyChanged -= OnNodeChanged;
-         _child = newChild;
-         _model.Parent = newChild.GetModel();
-         _child.PropertyChanged += OnNodeChanged;
-         LinePoints = SetLines();
-         OnPropertyChanged(nameof(ArrowPoints));
-      }
-
-      public InheritanceConnectionViewModel(ConnectionLineModel model, UMLClassViewModel parent, UMLClassViewModel child)
-      {
-         _model = model;
-         _parent = parent;
-         _child = child;
-
-         _parent.PropertyChanged += OnNodeChanged;
-         _child.PropertyChanged += OnNodeChanged;
-
-         LinePoints = SetLines();
-      }
-
-      private List<Point> CalculateArrowPoints()
-      {
-         double tipX = X2;
-         double tipY = Y2;
+         double X2 = _parent.X + _parent.Width / 2;
+         double Y2 = _parent.Y + _parent.GetTotalHeight();
 
          return new List<Point>
          {
-            new Point(tipX, tipY),           // tip pointing at parent
-            new Point(tipX - 10, tipY + _yOffset), // bottom left corner
-            new Point(tipX + 10, tipY + _yOffset)  // bottom right corner
+            new Point(X2, Y2),           // tip pointing at parent
+            new Point(X2 - 10, Y2 + _yOffset), // bottom left corner
+            new Point(X2 + 10, Y2 + _yOffset), // bottom right corner
          };
       }
 
-      public void OnNodeChanged(object? sender, PropertyChangedEventArgs e)
-      {
-         if (e.PropertyName is nameof(UMLClassViewModel.X)
-                            or nameof(UMLClassViewModel.Y)
-                            or nameof(UMLClassViewModel.Width)
-                            or nameof(UMLClassViewModel.AttributeHeight)
-                            or nameof(UMLClassViewModel.MethodHeight))
-         {
-            LinePoints = SetLines();
-            OnPropertyChanged(nameof(ArrowPoints));
-         }
-      }
-
-      public UMLClassViewModel GetParentClass()
-      {
-         return _parent;
-      }
-
-      public UMLClassViewModel GetChildClass()
-      {
-         return _child;
-      }
-
-      public List<Point> SetLines()
+      protected override List<Point> SetLines()
       {
          double connectChildLineOffset = 5;
 

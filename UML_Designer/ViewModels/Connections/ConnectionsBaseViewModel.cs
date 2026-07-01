@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia;
 using UML_Designer.Models;
 using Avalonia.Media;
+using UML_Designer.ViewModels.CanvasNodes;
 
 namespace UML_Designer.ViewModels.Connections
 {
    public abstract class ConnectionsBaseViewModel : ViewModelBase
    {
       protected readonly ConnectionLineModel _model;
-      protected UMLClassViewModel _parent;
-      protected UMLClassViewModel _child;
+      protected IConnectableNode _parent;
+      protected IConnectableNode _child;
 
       protected bool _isSelected;
       public bool IsSelected
@@ -25,14 +22,15 @@ namespace UML_Designer.ViewModels.Connections
             SetProperty(ref _isSelected, value);
             OnPropertyChanged(nameof(StrokeColor));
             OnPropertyChanged(nameof(StrokeThickness));
+            OnPropertyChanged(nameof(FillColor));
          }
       }
 
-      public IBrush StrokeColor => IsSelected ? Brushes.Blue : Brushes.Black;
-      public double StrokeThickness => IsSelected ? 4 : 2;
+      protected virtual string typeOfConn => "Inheritance";
 
-      public double X2 => _parent.X + _parent.Width / 2;
-      public double Y2 => _parent.Y + _parent.GetTotalHeight();
+      public IBrush StrokeColor => IsSelected ? Brushes.Blue : Brushes.Black;
+      public virtual IBrush FillColor => Brushes.LightGray;
+      public double StrokeThickness => IsSelected ? 4 : 2;
 
       public List<Point> ShapePoints => CalculateEndShape();
       public List<Point> LinePoints
@@ -45,7 +43,39 @@ namespace UML_Designer.ViewModels.Connections
          }
       }
 
-      public ConnectionsBaseViewModel(ConnectionLineModel model, UMLClassViewModel parent, UMLClassViewModel child)
+      /****************************************************
+       Methods and attributes for handling multiplicity
+       ****************************************************/
+
+      public Point MultiplicityLocation
+      {
+         get => _model.MultiplicityLocation;
+         set
+         {
+            _model.MultiplicityLocation = value;
+            OnPropertyChanged(nameof(MultiplicityLocation));
+         }
+      }
+
+      public string MultiplicityString
+      {
+         get => _model.Multiplicity ?? "";
+         set
+         {
+            _model.Multiplicity = value;
+            OnPropertyChanged(nameof(MultiplicityString));
+         }
+      }
+
+      protected bool _isEditingMultiplicity;
+      public bool IsEditingMultiplicity
+      {
+         get => _isEditingMultiplicity;
+         set => SetProperty(ref _isEditingMultiplicity, value);
+      }
+
+
+      public ConnectionsBaseViewModel(ConnectionLineModel model, IConnectableNode parent, IConnectableNode child)
       {
          _model = model;
          _parent = parent;
@@ -61,7 +91,7 @@ namespace UML_Designer.ViewModels.Connections
       {
          _parent.PropertyChanged -= OnNodeChanged;
          _parent = newParent;
-         _model.Parent = newParent.GetModel();
+         _model.ParentId = newParent.GetModel().Id;
          _parent.PropertyChanged += OnNodeChanged;
          LinePoints = SetLines();
          OnPropertyChanged(nameof(ShapePoints));
@@ -71,7 +101,7 @@ namespace UML_Designer.ViewModels.Connections
       {
          _child.PropertyChanged -= OnNodeChanged;
          _child = newChild;
-         _model.Parent = newChild.GetModel();
+         _model.ParentId = newChild.GetModel().Id;
          _child.PropertyChanged += OnNodeChanged;
          LinePoints = SetLines();
          OnPropertyChanged(nameof(ShapePoints));
@@ -92,14 +122,19 @@ namespace UML_Designer.ViewModels.Connections
          }
       }
 
-      public UMLClassViewModel GetParentClass()
+      public IConnectableNode GetParentClass()
       {
          return _parent;
       }
 
-      public UMLClassViewModel GetChildClass()
+      public IConnectableNode GetChildClass()
       {
          return _child;
+      }
+
+      public ConnectionLineModel GetModel()
+      {
+         return _model;
       }
 
       protected abstract List<Point> SetLines();

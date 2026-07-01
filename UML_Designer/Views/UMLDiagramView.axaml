@@ -1,0 +1,248 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:UML_Designer.ViewModels.CanvasNodes"
+             xmlns:views="using:UML_Designer.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:connections="using:UML_Designer.ViewModels.Connections"
+             xmlns:diagrams="using:UML_Designer.ViewModels.DiagramTypes"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UML_Designer.Views.UMLDiagramView"
+             x:DataType="diagrams:UMLDiagramViewModel"
+             KeyDown="OnKeyboardKeyDown">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 2 Rows Here -->
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <!-- 2 Columns Here -->
+			<ColumnDefinition Width="160"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+                            <!-- Top Tool Bar -->
+                    <Border Background="#2D2D30" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+				            <Button Content="Inheritance" Click="OnInheritanceClicked" Classes="TopBarButton" Classes.Active="{Binding IsInheritanceMode}"/>
+                            <Button Content="Composition" Click="OnCompositionClicked" Classes="TopBarButton" Classes.Active="{Binding IsCompositionMode}"/>
+                            <Button Content="Aggregation" Click="OnAggregationClicked" Classes="TopBarButton" Classes.Active="{Binding IsAggregationMode}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Sidebar -->
+                    <ScrollViewer Grid.Column="0" Grid.Row="1" FlowDirection="RightToLeft">
+                        <StackPanel Grid.Column="0" Background="#2D2D30" Spacing="10" FlowDirection="LeftToRight">
+
+                            <Button Content="Select" 
+                                    Click="OnSelectClicked" 
+                                    Classes="SideBarButton"
+                                    Classes.Active="{Binding IsSelectMode}"/>
+                            <Button Content="Create" 
+                                    Click="OnCreateClicked" 
+                                    Classes="SideBarButton"
+                                    Classes.Active="{Binding IsCreateMode}"/>
+                            <Button Content="Connect" 
+                                    Click="OnConnectClicked" 
+                                    Classes="SideBarButton"
+                                    Classes.Active="{Binding IsConnectMode}"/>
+                            <Button Content="Save File" 
+                                    Click="OnSaveClicked" 
+                                    Classes="SideBarButton"/>
+                            <Button Content="Load File" 
+                                    Click="OnLoadClicked" 
+                                    Classes="SideBarButton"/>
+                            <Button Content="Export PNG File" 
+                                    Click="OnExportClicked" 
+                                    Classes="SideBarButton"/>
+                            <Button Content="AI Feedback"
+                                    Click="OnGetFeedbackClicked"
+                                    Classes="SideBarButton"/>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+        <!-- Scrollable Canvas for UML Diagrams -->
+        <ScrollViewer Grid.Column="1" Grid.Row="1">
+            <Panel PointerPressed="OnCanvasClicked" PointerWheelChanged="OnCanvasScrolled" x:Name="DiagramPanel">
+                <Panel.RenderTransform>
+                    <ScaleTransform ScaleX="{Binding ZoomLevel}"
+                                    ScaleY="{Binding ZoomLevel}"/>
+                </Panel.RenderTransform>
+
+                <ItemsControl x:Name="UMLCanvas"
+                              ItemsSource="{Binding CanvasItems}"
+                              Height="5000"
+                              Width="5000">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Name="MainCanvas" Height="5000" Width="5000" Background="LightGray"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemContainerTheme>
+                        <ControlTheme TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{ReflectionBinding X, FallbackValue=0}"/>
+                            <Setter Property="Canvas.Top" Value="{ReflectionBinding Y, FallbackValue=0}"/>
+                        </ControlTheme>
+                    </ItemsControl.ItemContainerTheme>
+
+                    <ItemsControl.DataTemplates>
+                        <views:CanvasItemTemplateSelector>
+
+                            <views:CanvasItemTemplateSelector.ClassTemplate>
+                                <DataTemplate x:DataType="vm:UMLClassViewModel">
+                                    <Border Classes="MainContainer UMLClass"
+                                            Classes.Selected="{Binding IsSelected}"
+                                            PointerPressed="OnUMLClassClicked"
+                                            PointerMoved="OnUMLClassMoved"
+                                            PointerReleased="OnUMLClassReleased"
+                                            Width="{Binding Width}">
+                                        <StackPanel>
+                                            <Border Classes="UMLClassSection FullBorder"
+                                                    Height="{Binding TitleHeight}">
+                                                <Panel>
+                                                    <TextBlock Text="{Binding Title}"
+                                                               IsVisible="{Binding !IsEditingTitle}"
+                                                               HorizontalAlignment="Stretch"
+                                                               VerticalAlignment="Stretch"
+                                                               TextAlignment="Center"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="Black"
+                                                               Background="Transparent"
+                                                               Padding="5"
+                                                               PointerPressed="OnClassTitleClicked"/>
+                                                    <TextBox   Text="{Binding Title}"
+                                                               IsVisible="{Binding IsEditingTitle}"
+                                                               HorizontalAlignment="Stretch"
+                                                               TextWrapping="Wrap"
+                                                               AcceptsReturn="True"
+                                                               LostFocus="OnClassTitleLostFocus"
+                                                               KeyDown="OnClassTitleKeyDown"/>
+                                                </Panel>
+                                            </Border>
+                                            <Border Classes="UMLClassSection NoTopBorder"
+                                                    Height="{Binding AttributeHeight}">
+                                                <Panel>
+                                                    <TextBlock Text="{Binding AttributesString}"
+                                                               Classes="AttributesDisplayText"
+                                                               IsVisible="{Binding !IsEditingAttributes}"
+                                                               PointerPressed="OnClassAttributesClicked"/>
+                                                    <TextBox   Text="{Binding AttributesString}"
+                                                               IsVisible="{Binding IsEditingAttributes}"
+                                                               HorizontalAlignment="Stretch"
+                                                               AcceptsReturn="True"
+                                                               TextWrapping="Wrap"
+                                                               LostFocus="OnClassAttributesLostFocus"
+                                                               KeyDown="OnClassAttributesKeyDown"/>
+                                                    <Border    Classes="ResizeHandle"
+                                                               HorizontalAlignment="Right"
+                                                               VerticalAlignment="Bottom"
+                                                               PointerPressed="OnResizeAttributesHandleClicked"
+                                                               PointerMoved="OnResizeAttributesHandleMoved"
+                                                               PointerReleased="OnResizeHandleReleased"/>
+                                                </Panel>
+                                            </Border>
+                                            <Border Classes="UMLClassSection NoTopBorder"
+                                                    Height="{Binding MethodHeight}">
+                                                <Panel>
+                                                    <TextBlock Text="{Binding MethodsString}"
+                                                               Classes="MethodsDisplayText"
+                                                               IsVisible="{Binding !IsEditingMethods}"
+                                                               PointerPressed="OnClassMethodsClicked"/>
+                                                    <TextBox   Text="{Binding MethodsString}"
+                                                               IsVisible="{Binding IsEditingMethods}"
+                                                               HorizontalAlignment="Stretch"
+                                                               AcceptsReturn="True"
+                                                               TextWrapping="Wrap"
+                                                               LostFocus="OnClassMethodsLostFocus"
+                                                               KeyDown="OnClassMethodsKeyDown"/>
+                                                    <Border    Classes="ResizeHandle"
+                                                               HorizontalAlignment="Right"
+                                                               VerticalAlignment="Bottom"
+                                                               PointerPressed="OnResizeMethodsHandleClicked"
+                                                               PointerMoved="OnResizeMethodsHandleMoved"
+                                                               PointerReleased="OnResizeHandleReleased"/>
+                                                </Panel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </views:CanvasItemTemplateSelector.ClassTemplate>
+
+                            <views:CanvasItemTemplateSelector.ConnectionTemplate>
+                                <DataTemplate x:DataType="connections:ConnectionsBaseViewModel">
+                                    <Canvas Width="5000" Height="5000">
+                                        <TextBlock Text="{Binding MultiplicityString}"
+                                                  Foreground="Black"
+                                                  Width="30"
+                                                  Background="LightGray"
+                                                  IsVisible="{Binding !IsEditingMultiplicity}"
+                                                  Canvas.Left="{Binding MultiplicityLocation.X}"
+                                                  Canvas.Top="{Binding MultiplicityLocation.Y}"
+                                                  PointerPressed="OnMultiplicityClicked"/>
+                                        <TextBox  Text="{Binding MultiplicityString}"
+                                                  IsVisible="{Binding IsEditingMultiplicity}"
+                                                  HorizontalAlignment="Stretch"
+                                                  Canvas.Left="{Binding MultiplicityLocation.X}"
+                                                  Canvas.Top="{Binding MultiplicityLocation.Y}"
+                                                  AcceptsReturn="True"
+                                                  TextWrapping="Wrap"
+                                                  LostFocus="OnMultiplicityLostFocus"
+                                                  KeyDown="OnMultiplicityKeyDown"/>
+                                        <Polyline PointerPressed="OnConnectionClick"
+                                                  Points="{Binding LinePoints}"
+                                                  Stroke="Transparent"
+                                                  StrokeThickness="8"/>
+                                        <Polyline Points="{Binding LinePoints}"
+                                                  Classes="VisibleConnection"
+                                                  PointerPressed="OnConnectionClick"
+                                                  Stroke="{Binding StrokeColor}"
+                                                  StrokeThickness="{Binding StrokeThickness}"/>
+                                        <Polygon  Points="{Binding ShapePoints}"
+                                                  Classes="VisibleConnection"
+                                                  PointerPressed="OnConnectionClick"
+                                                  Stroke="{Binding StrokeColor}"
+                                                  ZIndex="100"
+                                                  StrokeThickness="{Binding StrokeThickness}"
+                                                  Fill="{Binding FillColor}"/>
+                                    </Canvas>
+                                </DataTemplate>
+                            </views:CanvasItemTemplateSelector.ConnectionTemplate>
+
+                        </views:CanvasItemTemplateSelector>
+                    </ItemsControl.DataTemplates>
+
+                </ItemsControl>
+
+                <Panel IsVisible="{Binding IsConnectMode}">
+                    <TextBlock Text="Select a Class to point to" 
+                               IsVisible="{Binding !ConnectionsCanvas.NewParentSelected}" 
+                               Background="crimson" 
+                               Width="300"
+                               Height="30"
+                               Padding="5"
+                               Margin="10"
+                               TextAlignment="Center"
+                               VerticalAlignment="Top"/>
+                    <TextBlock Text="Select a Class to point from"
+                               IsVisible="{Binding ConnectionsCanvas.NewParentSelected}" 
+                               Background="Crimson" 
+                               Width="300"
+                               Height="30"
+                               Padding="5"
+                               Margin="10"
+                               TextAlignment="Center"
+                               VerticalAlignment="Top"/>
+                </Panel>
+    
+            </Panel>
+        </ScrollViewer>
+
+    </Grid>
+
+
+</UserControl>
