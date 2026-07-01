@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace UML_Designer.ViewModels
          System.Diagnostics.Debug.WriteLine($"Items in selected Classes: {SelectedClasses.Count}");
       }
 
-      private void DeselectAllClasses()
+      public void DeselectAllClasses()
       {
          MarkSelectedAsFalse();
          foreach (var c in SelectedClasses)
@@ -66,13 +67,16 @@ namespace UML_Designer.ViewModels
          SelectedClasses.Clear();
       }
 
-      public void DeleteSelectedClasses()
+      public void DeleteSelectedClasses(MainWindowViewModel vm)
       {
          if (SelectedClass is not null)
             SelectedClass = null;
          var toDelete = SelectedClasses.ToList();
          foreach (var node in toDelete)
+         {
+            vm.ConnectionsCanvas.DeleteRelatedConnections(node);
             Classes.Remove(node);
+         }
 
          SelectedClasses.Clear();
       }

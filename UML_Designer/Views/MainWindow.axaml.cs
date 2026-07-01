@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using UML_Designer.ViewModels;
 using Avalonia;
+using UML_Designer.ViewModels.Connections;
 
 namespace UML_Designer.Views
 {
@@ -24,22 +25,59 @@ namespace UML_Designer.Views
 
       private void OnSelectClicked(object sender, RoutedEventArgs e)
       {
-         System.Diagnostics.Debug.WriteLine("Select Clicked");
+         var vm = (MainWindowViewModel)DataContext!;
+         vm.CurrentTool = ToolMode.Select;
+         vm.ClearSelections();
       }
 
-      private void OnCreateClassNodeClicked(object sender, RoutedEventArgs e)
+      private void OnCreateClicked(object sender, RoutedEventArgs e)
       {
-         System.Diagnostics.Debug.WriteLine("Create Class Node Clicked");
-      }
-
-      private void OnCreateInterfaceNodeClicked(object sender, RoutedEventArgs e)
-      {
-         System.Diagnostics.Debug.WriteLine("Create Interface Clicked");
+         var vm = (MainWindowViewModel)DataContext!;
+         vm.CurrentTool = ToolMode.Create;
+         vm.ClearSelections();
       }
 
       private void OnConnectClicked(object sender, RoutedEventArgs e)
       {
-         System.Diagnostics.Debug.WriteLine("Connect Clicked");
+         var vm = (MainWindowViewModel)DataContext!;
+         vm.CurrentTool = ToolMode.Connect;
+         vm.ClearSelections();
+      }
+
+      private void OnIOClicked(object sender, RoutedEventArgs e)
+      {
+
+      }
+
+      //
+      // Now for the Connection Buttons
+      //
+
+      private void OnInheritanceClicked(object sender, RoutedEventArgs e)
+      {
+         var vm = (MainWindowViewModel)DataContext!;
+         vm.CurrentConnectionType = ConnectionType.Inheritance;
+         vm.ClearSelections();
+
+         System.Diagnostics.Debug.WriteLine($"Changed type to {vm.CurrentConnectionType}");
+      }
+
+      private void OnCompositionClicked(object sender, RoutedEventArgs e)
+      {
+         var vm = (MainWindowViewModel)DataContext!;
+         vm.CurrentConnectionType = ConnectionType.Composition;
+         vm.ClearSelections();
+
+         System.Diagnostics.Debug.WriteLine($"Changed type to {vm.CurrentConnectionType}");
+      }
+
+      private void OnAggregationClicked(object sender, RoutedEventArgs e)
+      {
+         var vm = (MainWindowViewModel)DataContext!;
+         vm.CurrentConnectionType = ConnectionType.Aggregation;
+         vm.ClearSelections();
+
+         System.Diagnostics.Debug.WriteLine($"Changed type to {vm.CurrentConnectionType}");
       }
 
       /****************************************************************************************
@@ -50,7 +88,8 @@ namespace UML_Designer.Views
          var vm = (MainWindowViewModel)DataContext!;
          if (e.Key == Key.Delete)
          {
-            vm.ClassCanvas.DeleteSelectedClasses();
+            vm.ClassCanvas.DeleteSelectedClasses(vm);
+            vm.ConnectionsCanvas.DeleteSelectedConnection();
          }
       }
 
@@ -60,9 +99,14 @@ namespace UML_Designer.Views
        ****************************************************************************************/
       private void OnCanvasClicked(object? sender, PointerPressedEventArgs e)
       {
+         System.Diagnostics.Debug.WriteLine($"Canvas clicked, sender = {sender?.GetType().Name}, handled = {e.Handled}");
+         
          if (e.Handled) return;
-
          var vm = (MainWindowViewModel)DataContext!;
+         if (vm.CurrentTool != ToolMode.Create) return;
+
+         vm.ClearSelections();
+
          var canvas = UMLCanvas.FindDescendantOfType<Canvas>();
          var position = e.GetPosition(canvas);
          vm.ClassCanvas.AddClass(position.X - 125, position.Y - 115);
@@ -78,6 +122,15 @@ namespace UML_Designer.Views
          var vm = (MainWindowViewModel)DataContext!;
          var border = (Border)sender!;
          var selectedClass = (UMLClassViewModel)border.DataContext!;
+
+         if (vm.IsConnectMode)
+         {
+            HandleConnectionCreation(vm, selectedClass);
+            return;
+         }
+
+         vm.ClearConnections();
+
          bool isCtrlHeld = e.KeyModifiers.HasFlag(KeyModifiers.Control);
 
          vm.ClassCanvas.SelectClass(selectedClass, isCtrlHeld);
@@ -122,12 +175,22 @@ namespace UML_Designer.Views
       private void OnClassTitleClicked(object? sender, PointerPressedEventArgs e)
       {
          System.Diagnostics.Debug.WriteLine("Title Pressed");
-         if (e.ClickCount == 2)
+
+         var vm = (MainWindowViewModel)DataContext!;
+
+         if (vm.CurrentTool == ToolMode.Connect)
          {
-            e.Handled = true;
-            var textBlock = (TextBlock)sender!;
-            var node = (UMLClassViewModel)textBlock.DataContext!;
-            node.IsEditingTitle = true;
+
+         }
+         else
+         {
+            if (e.ClickCount == 2)
+            {
+               e.Handled = true;
+               var textBlock = (TextBlock)sender!;
+               var node = (UMLClassViewModel)textBlock.DataContext!;
+               node.IsEditingTitle = true;
+            }
          }
       }
 
@@ -156,12 +219,22 @@ namespace UML_Designer.Views
       private void OnClassAttributesClicked(object? sender, PointerPressedEventArgs e)
       {
          System.Diagnostics.Debug.WriteLine("Attributes Pressed");
-         if (e.ClickCount == 2)
+
+         var vm = (MainWindowViewModel)DataContext!;
+
+         if (vm.CurrentTool == ToolMode.Connect)
          {
-            e.Handled = true;
-            var textBlock = (TextBlock)sender!;
-            var node = (UMLClassViewModel)textBlock.DataContext!;
-            node.IsEditingAttributes = true;
+
+         }
+         else
+         {
+            if (e.ClickCount == 2)
+            {
+               e.Handled = true;
+               var textBlock = (TextBlock)sender!;
+               var node = (UMLClassViewModel)textBlock.DataContext!;
+               node.IsEditingAttributes = true;
+            }
          }
       }
 
@@ -190,12 +263,22 @@ namespace UML_Designer.Views
       private void OnClassMethodsClicked(object? sender, PointerPressedEventArgs e)
       {
          System.Diagnostics.Debug.WriteLine("Attributes Pressed");
-         if (e.ClickCount == 2)
+
+         var vm = (MainWindowViewModel)DataContext!;
+
+         if (vm.CurrentTool == ToolMode.Connect)
          {
-            e.Handled = true;
-            var textBlock = (TextBlock)sender!;
-            var node = (UMLClassViewModel)textBlock.DataContext!;
-            node.IsEditingMethods = true;
+
+         }
+         else
+         {
+            if (e.ClickCount == 2)
+            {
+               e.Handled = true;
+               var textBlock = (TextBlock)sender!;
+               var node = (UMLClassViewModel)textBlock.DataContext!;
+               node.IsEditingMethods = true;
+            }
          }
       }
 
@@ -305,6 +388,55 @@ namespace UML_Designer.Views
       {
          e.Pointer.Capture(null);
          _resizingClass = null;
+      }
+
+      /****************************************************************************************
+       * This portion will handle all of the editing and deletion operations of 
+       * connections between nodes.
+       ****************************************************************************************/
+      private void OnConnectionClick(object? sender, PointerPressedEventArgs e)
+      {
+         System.Diagnostics.Debug.WriteLine($"Reached The Handler");
+
+         e.Handled = true;
+         var vm = (MainWindowViewModel)DataContext!;
+
+         if (!vm.IsSelectMode)
+            return;
+         
+         var element = (Control)sender!;
+         var conn = (InheritanceConnectionViewModel)element.DataContext!;
+
+         vm.ClearSelections();
+
+         vm.ConnectionsCanvas.SelectConnection(conn);
+
+         System.Diagnostics.Debug.WriteLine($"Connection Clicked - Selected = {conn.IsSelected}");
+      }
+
+      private void HandleConnectionCreation(MainWindowViewModel vm, UMLClassViewModel selectedClass)
+      {
+         if (vm.ConnectionsCanvas.ParentClass is null)
+         {
+            vm.ConnectionsCanvas.SetParent(selectedClass);
+            vm.ClassCanvas.SelectClass(selectedClass, false);
+         }
+         else
+         {
+            vm.ConnectionsCanvas.CreateConnection(selectedClass, vm.CurrentConnectionType);
+            vm.ClassCanvas.DeselectAllClasses();
+         }
+      }
+
+
+      private void OnCanvasScrolled(object? sender, PointerWheelEventArgs e)
+      {
+         if (!e.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
+
+         var vm = (MainWindowViewModel)DataContext!;
+         var delta = e.Delta.Y > 0 ? 0.1 : -0.1;
+         vm.ZoomLevel += delta;
+         e.Handled = true;
       }
    }
 }

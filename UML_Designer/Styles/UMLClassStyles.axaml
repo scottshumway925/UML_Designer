@@ -26,22 +26,40 @@
     </Style>
 
     <Style Selector="TextBlock.AttributesDisplayText">
-       <Setter Property="HorizontalAlignment" Value="Left"/>
-       <Setter Property="VerticalAlignment" Value="Top"/>
+       <Setter Property="HorizontalAlignment" Value="Stretch"/>
+       <Setter Property="VerticalAlignment" Value="Stretch"/>
        <Setter Property="Padding" Value="5"/>
+       <Setter Property="TextWrapping" Value="Wrap"/>
+       <Setter Property="Foreground" Value="black"/>
+       <Setter Property="Background" Value="Transparent"/>
     </Style>
 
     <Style Selector="TextBlock.MethodsDisplayText">
-       <Setter Property="HorizontalAlignment" Value="Left"/>
-       <Setter Property="VerticalAlignment" Value="Top"/>
+       <Setter Property="HorizontalAlignment" Value="Stretch"/>
+       <Setter Property="VerticalAlignment" Value="Stretch"/>
        <Setter Property="Padding" Value="5"/>
+       <Setter Property="TextWrapping" Value="Wrap"/>
+       <Setter Property="Foreground" Value="black"/>
+       <Setter Property="Background" Value="Transparent"/>
     </Style>
 
     <Style Selector="Border.ResizeHandle">
         <Setter Property="Width" Value="10"/>
         <Setter Property="Height" Value="10"/>
         <Setter Property="Background" Value="#888888"/>
-
     </Style>
     
+    <Style Selector="Polyline.Selected">
+       <Setter Property="Stroke" Value="#0068b3"/>
+       <Setter Property="StrokeThickness" Value="6"/>
+    </Style>
+
+    <Style Selector="Polyline.VisibleConnection">
+       <Setter Property="Stroke" Value="Black"/>
+    </Style>
+
+    <Style Selector="Polygon.VisibleConnection">
+       <Setter Property="Stroke" Value="Black"/>
+    </Style>
+
 </Styles>
