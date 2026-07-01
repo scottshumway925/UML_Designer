@@ -2,10 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="UML_Designer.App"
              xmlns:local="using:UML_Designer"
+             xmlns:models="using:UML_Designer.Models"
+             xmlns:views="using:UML_Designer.Views"
+             xmlns:diagrams="using:UML_Designer.ViewModels.DiagramTypes"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
+        <DataTemplate DataType="diagrams:UMLDiagramViewModel">
+            <views:UMLDiagramView/>
+        </DataTemplate>
+        <DataTemplate DataType="diagrams:StructureChartViewModel">
+            <views:StructureChartView/>
+        </DataTemplate>
+        <DataTemplate DataType="diagrams:DataFlowDiagramViewModel">
+            <views:DataFlowDiagramView/>
+        </DataTemplate>
         <local:ViewLocator/>
     </Application.DataTemplates>
   

@@ -1,22 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia;
+using UML_Designer.Models.StructureChartModels;
 
 namespace UML_Designer.Models
 {
    public class ConnectionLineModel
    {
       public List<Point> RoutingPoints { get; set; } = new();
-      public UMLClassModel Parent { get; set; }
-      public UMLClassModel Child { get; set; }
+      public Guid ParentId { get; set; }
+      public Guid ChildId { get; set; }
+      public string ConnectionType { get; set; } = "Inheritance";
+      public string? Multiplicity { get; set; } = "*";
+      public Point MultiplicityLocation { get; set; }
 
-      public ConnectionLineModel(UMLClassModel parent, UMLClassModel child)
+      public ConnectionLineModel() { }
+      public ConnectionLineModel(UMLClassModel parent, UMLClassModel child, string connType = "Inheritance")
       {
-         Parent = parent;
-         Child = child;
+         ParentId = parent.Id;
+         ChildId = child.Id;
+         ConnectionType = connType;
+      }
+
+      public ConnectionLineModel(StructureChartBubbleModel caller, StructureChartBubbleModel callee)
+      {
+         ParentId = caller.Id;
+         ChildId = callee.Id;
+         ConnectionType = "FunctionCall";
+         Multiplicity = "*****";
       }
    }
 }

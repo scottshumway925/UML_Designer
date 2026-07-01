@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:UML_Designer.ViewModels.CanvasNodes"
+             xmlns:views="using:UML_Designer.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:connections="using:UML_Designer.ViewModels.Connections"
+             xmlns:diagrams="using:UML_Designer.ViewModels.DiagramTypes"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UML_Designer.Views.DataFlowDiagramView"
+             x:DataType="diagrams:DataFlowDiagramViewModel">
+
+</UserControl>

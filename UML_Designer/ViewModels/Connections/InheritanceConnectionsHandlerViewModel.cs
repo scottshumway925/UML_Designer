@@ -6,14 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UML_Designer.Models;
+using UML_Designer.ViewModels.CanvasNodes;
+using UML_Designer.ViewModels.DiagramTypes;
 
 namespace UML_Designer.ViewModels.Connections
 {
-   public class InheritanceConnectionsHandlerViewModel : ViewModelBase
+   public class ConnectionsHandlerViewModel : ViewModelBase
    {
-      public ObservableCollection<InheritanceConnectionViewModel> Connections { get; } = new();
+      public ObservableCollection<ConnectionsBaseViewModel> Connections { get; } = new();
       public UMLClassViewModel? ParentClass;
-      public InheritanceConnectionViewModel? SelectedConnection { get; set; }
+      public StructureChartBubbleViewModel? ParentBubble;
+      public ConnectionsBaseViewModel? SelectedConnection { get; set; }
 
       private bool _newParentSelected;
       public bool NewParentSelected
@@ -29,6 +32,12 @@ namespace UML_Designer.ViewModels.Connections
       public void DeselectClasses()
       {
          ParentClass = null;
+         NewParentSelected = false;
+      }
+
+      public void DeselectBubbles()
+      {
+         ParentBubble = null;
          NewParentSelected = false;
       }
 
@@ -54,9 +63,10 @@ namespace UML_Designer.ViewModels.Connections
                Connections.Add(new InheritanceConnectionViewModel(model, ParentClass, childClass));
                break;
             case ConnectionType.Aggregation:
-               
+               Connections.Add(new AggregationConnectionViewModel(model, ParentClass, childClass));
                break;
             case ConnectionType.Composition:
+               Connections.Add(new CompositionConnectionViewModel(model, ParentClass, childClass));
                break;
          }
          
@@ -64,7 +74,29 @@ namespace UML_Designer.ViewModels.Connections
          NewParentSelected = false;
       }
 
-      public void SelectConnection(InheritanceConnectionViewModel connection)
+      public void SetParent(StructureChartBubbleViewModel selectedBubble)
+      {
+         NewParentSelected = true;
+         ParentBubble = selectedBubble;
+      }
+
+      public void CreateConnection(StructureChartBubbleViewModel childBubble)
+      {
+         if (ParentBubble is null || ParentBubble == childBubble)
+         {
+            DeselectBubbles();
+            return;
+         }
+
+         var model = new ConnectionLineModel(ParentBubble.GetModel(), childBubble.GetModel());
+
+         Connections.Add(new StructureChartConnectionViewModel(model, ParentBubble, childBubble));
+
+         ParentBubble = null;
+         NewParentSelected = false;
+      }
+
+      public void SelectConnection(ConnectionsBaseViewModel connection)
       {
          if (connection.IsSelected)
          {
@@ -96,7 +128,7 @@ namespace UML_Designer.ViewModels.Connections
          DeselectConnections();
       }
 
-      public void DeleteRelatedConnections(UMLClassViewModel TBDClass)
+      public void DeleteRelatedConnections(object? TBDClass)
       {
          var potentialDeletes = Connections.ToList();
          foreach (var conn in potentialDeletes)
